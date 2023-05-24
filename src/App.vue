@@ -1,19 +1,46 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from "./components/HelloWorld.vue";
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
+const menu = ref([
+  {
+    idx: 1,
+    title: "Книги",
+    link: '/'
+  },
+  {
+    idx: 2,
+    title: "Тесты",
+    link: '/tests'
+  }
+])
 </script>
 
 <template>
-  <img alt="Vite logo" width="120" src="./assets/vite.svg" />
-  <img alt="Vue logo" width="120" src="./assets/logo.png" />
-  <img alt="Electron logo" width="120" src="./assets/electron.png" />
-  <img alt="TS logo" width="120" src="./assets/ts.png" />
-  <HelloWorld msg="Vite + Vue 3 + Electron + TypeScript" />
-  <br />
-  <p class="plugins">Plugins</p>
-  <img alt="vue router logo" width="120" src="./assets/vueRouter.png" />
-  <img alt="pinia logo" width="120" src="./assets/pinia.svg" />
+  <v-card>
+    <v-layout>
+      <v-navigation-drawer>
+        <v-list>
+          <template v-for="item in menu" :key="item.idx">
+            <span class="tw-text-2xl tw-cursor-pointer hover:tw-text-blue-400" @click="router.push({ path: item.link })">
+                <v-list-item :title="item.title"></v-list-item>
+            </span>
+          </template>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-app-bar>
+        <span class="tw-flex tw-gap-x-4">
+          <v-icon icon="mdi-school"></v-icon> <span>ЭУМК Доступное Образование</span>
+        </span>
+      </v-app-bar>
+
+      <v-main class="container !tw-h-screen">
+        <router-view />
+      </v-main>
+    </v-layout>
+  </v-card>
 </template>
 
 <style>
@@ -32,5 +59,12 @@ img {
   font-size: 20px;
   font-weight: bold;
   margin-top: 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 </style>

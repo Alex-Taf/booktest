@@ -14,7 +14,7 @@
     "skipLibCheck": true,
     "outDir": "dist/electron"
   },
-  "include": ["src/electron/**/*"],
+  "include": ["src/electron/**/*", "public/books", "public/data"],
   "references": [{
     "path": "./tsconfig.node.json"
   }]

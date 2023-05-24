@@ -1,0 +1,10 @@
+{
+    "items": [
+        {
+            "id": 1,
+            "title": "Kniga",
+            "desc": "Romatic sci-fi shooter on desert planet",
+            "link": "/home/alex/Projects/booktest/dist/books/V_Grigoryev_Programmirovanie_odnokristalnykh_mikroprotsessorov.pdf"
+        }
+    ]
+}
