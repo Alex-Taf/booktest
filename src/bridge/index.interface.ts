@@ -1,6 +1,5 @@
 export interface IApi {
     getAppPath: () => string,
-    readBooksData: () => Promise<any[]>,
-    writeBooksData: (data: any) => Promise<any>,
+    deleteLocalFile: (dir: string) => void,
     saveLocalFile: (data: any) => Promise<any>
 }

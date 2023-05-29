@@ -1,4 +1,5 @@
 import { toRaw } from 'vue'
+import Localbase from "localbase"
 import { OBJECTIFY_MODES } from '../config/index'
 
 export const Objectify = (target: any, type: string) => {
@@ -48,4 +49,26 @@ export const saveReportAs = (report: string) => {
     
     //The removeChild() method of the Node interface removes a child node from the DOM and returns the removed node
     document.body.removeChild(element);
+}
+
+export class LDB {
+    private _db = new Localbase('ldb')
+
+    public save(name: string, data: any) {
+        this._db.collection(name).add(Objectify(data, 'JSON'))
+    }
+
+    public async load(name: string) {
+        return await this._db.collection(name).get().then(rows => {
+            return rows
+        })
+    }
+
+    public update(name: string, data: any) {
+        this._db.collection(name).doc({ id: data.id }).update(Objectify(data, 'JSON'))
+    }
+
+    public async delete(name: string, id: number) {
+        this._db.collection(name).doc({ id }).delete()
+    }
 }

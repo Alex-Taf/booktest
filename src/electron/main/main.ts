@@ -1,6 +1,5 @@
 import { join } from "path";
 import { app, BrowserWindow, ipcMain } from "electron";
-import fs from "fs-extra";
 
 const isDev = process.env.npm_lifecycle_event === "app:dev" ? true : false;
 
@@ -21,6 +20,7 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(join(__dirname, "../../index.html"));
+    mainWindow.webContents.openDevTools();
   }
   // mainWindow.loadURL( //this doesn't work on macOS in build and preview mode
   //     isDev ?
@@ -49,65 +49,3 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
-
-// ipcMain.handle("isDev", async (event, mess) => {
-//   try {
-//     return isDev;
-//   } catch (error) {
-//     return error;
-//   }
-// });
-
-// ipcMain.on("get-app-path", async (event, mess) => {
-//   try {
-//     return {
-//       path: `${join(__dirname, "/")}`,
-//     };
-//   } catch (error) {
-//     return error;
-//   }
-// });
-
-// ipcMain.handle("read-books-data", async (event, mess) => {
-//   try {
-//     const books = fs.readJsonSync(join(__dirname, "../../data/books.json"));
-//     const items = books.map((book: any) => {
-//       return {
-//         id: book.id,
-//         title: book.title,
-//         desc: book.desc,
-//         link: book.link,
-//       };
-//     });
-//     console.log(books.items);
-//     return items;
-//   } catch (error) {
-//     return error;
-//   }
-// });
-
-// ipcMain.on("write-books-data", async (event, data) => {
-//   try {
-//     fs.writeJson(`${join(__dirname, "../../data/books.json")}`, data, (err) => {
-//       if (err) return console.error(err);
-//       console.log("success!");
-//     });
-//   } catch (error) {
-//     return error;
-//   }
-// });
-
-// ipcMain.on("save-local-file", async (event, data) => {
-//   try {
-//     fs.copy(
-//       data.sourcePath,
-//       join(__dirname, `../../books/${data.fileName}`),
-//       (err: Error) => {
-//         if (err) throw err;
-//         console.log("Rename complete!");
-//       }
-//     );
-//   } catch (error) {
-//     return error;
-//   }
-// });

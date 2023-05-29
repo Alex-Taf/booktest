@@ -1,6 +1,9 @@
 import { contextBridge } from "electron/renderer";
 import { join } from "path";
 import fs from "fs-extra";
+
+const isDev = process.env.npm_lifecycle_event === "app:dev" ? true : false;
+
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
 window.addEventListener("DOMContentLoaded", () => {
@@ -14,30 +17,12 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+contextBridge.exposeInMainWorld("require", require);
+
 contextBridge.exposeInMainWorld("api", {
-  getAppPath: () => `${join(__dirname, '../../')}`,
-  readBooksData: async () => {
-    const books = fs.readJsonSync(join(__dirname, "../../data/books.json"));
-    const items = books.items.map((book: any) => {
-      return {
-        id: book.id,
-        title: book.title,
-        desc: book.desc,
-        link: book.link,
-      };
-    });
-    console.log(books.items);
-    return items;
-  },
-  writeBooksData: async (data: any) => {
-    // data[data.length - 1].link = join(__dirname, `../../${data[data.length - 1].link}`)
-    // // modified.link = join(__dirname, `../../${data[data.length - 1].link}`)
-    // console.log(data)
-    // // const serialized = JSON.stringify(data.splice(data.length - 1, 1, modified))
-    fs.writeJson(`${join(__dirname, "../../data/books.json")}`, JSON.stringify(data), (err) => {
-      if (err) return console.error(err);
-      console.log("success!");
-    });
+  getAppPath: () => isDev ? 'http://localhost:3000' : `${join(__dirname, '../../')}`,
+  deleteLocalFile: async (dir: string) => {
+    fs.removeSync(dir)
   },
   saveLocalFile: async (data: any) => {
     fs.copy(

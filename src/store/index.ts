@@ -2,12 +2,15 @@ import { defineStore } from 'pinia'
 import router from '../router'
 import { useBridge } from '../bridge'
 import { read, utils } from 'xlsx';
+import { LDB } from '../utils';
 
+const ldb = new LDB()
 const bridge = useBridge()
 
 export const useStore = defineStore({
     id: 'store',
     state: () => ({
+        password: '12345678',
         currentBook: {},
         books: [],
         parsedData: {},
@@ -29,60 +32,44 @@ export const useStore = defineStore({
         sheetActive: (state) => state.activeSheet,
         total: (state) => state.testsTotal,
         testsNames: (state) => state.allTestsNames,
-        test: (state) => state.currentTest
+        test: (state) => state.currentTest,
+        passwd: (state) => state.password
     },
     actions: {
         loadBook(id: number) {
             this.currentBook = this.books.find(book => book.id === id)
+            this.currentBook.link = `${bridge.getAppPath()}/${this.currentBook.link}`
             console.log(this.currentBook)
             router.push({ path: '/viewer' })
         },
-        loadAllBooks() {
-            bridge.readBooksData().then((result) => {
-                this.books = result
-                console.log(this.books)
-            })
-            // console.log(books)
-            // //const { default: books } = await import(`${bridge.isDev() ? 'http://localhost:3000' : bridge.getAppPath() }/data/books.json`, { assert: { type: 'json' } })
-            // this.books = books.map(book => {
-            //     return {
-            //         id: book.id,
-            //         title: book.title,
-            //         desc: book.desc,
-            //         link: book.link
-            //     }
-            // })
+        async loadAllBooks() {
+            this.books = await ldb.load("books")
         },
         async uploadBook(file: Event) {
             const uploadedFile = await file?.target?.files[0]
-
             const hashFileName = `${Math.floor(Math.random() * (100000 - 0 + 1)) + 0}_${uploadedFile.name}`
-
-            const booksOnWrite = this.books
 
             const book = {
                 id: Math.floor(Math.random() * (100000 - 0 + 1)) + 0,
                 title: uploadedFile.name.split('.')[0],
-                desc: 'random desc',
-                link: ''
+                link: `books/${hashFileName}`
             }
 
-            book.link = `${bridge.getAppPath()}/books/${hashFileName}`
-
-            booksOnWrite.push(book)
-
-            bridge.writeBooksData(JSON.parse(JSON.stringify(booksOnWrite))).then(() => {
-                bridge.readBooksData().then((result) => {
-                    this.books = result
-                })
-            })
+            ldb.save("books", book)
+            this.books = await ldb.load("books")
 
             await bridge.saveLocalFile({
                 fileName: hashFileName,
                 sourcePath: uploadedFile.path
             })
         },
-        async loadTestsFromFile(e: Event, options?: { loadInDb?: boolean }) {
+        async deleteBook(id: number, dir: string) {
+            await ldb.delete("books", id)
+            this.books = await ldb.load("books")
+
+            bridge.deleteLocalFile(dir)
+        },
+        async loadTestsFromFile(e: Event) {
             if (e) {
                 /* Reading a file from event handler */
                 this.data = await e?.target?.files[0].arrayBuffer();

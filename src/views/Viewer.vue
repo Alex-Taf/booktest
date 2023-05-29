@@ -15,7 +15,7 @@ const { pdf, pages } = usePDF(
 
 <template>
   <div style="text-align: center">
-    <div>
+    <div class="tw-mb-5">
       <v-btn color="blue" @click="page = page > 1 ? page - 1 : page">Prev</v-btn>
       <span>{{ page }} / {{ pages }}</span>
       <v-btn color="green" @click="page = page < pages ? page + 1 : page">Next</v-btn>
