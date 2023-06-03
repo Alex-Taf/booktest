@@ -16,9 +16,9 @@ const { pdf, pages } = usePDF(
 <template>
   <div style="text-align: center">
     <div class="tw-mb-5">
-      <v-btn color="blue" @click="page = page > 1 ? page - 1 : page">Prev</v-btn>
+      <v-btn color="blue" @click="page = page > 1 ? page - 1 : page">Предыдущая страница</v-btn>
       <span>{{ page }} / {{ pages }}</span>
-      <v-btn color="green" @click="page = page < pages ? page + 1 : page">Next</v-btn>
+      <v-btn color="green" @click="page = page < pages ? page + 1 : page">Следующая страница</v-btn>
     </div>
     <VuePDF :pdf="pdf" :page="page" />
   </div>
